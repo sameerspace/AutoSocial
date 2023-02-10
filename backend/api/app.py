@@ -1,7 +1,0 @@
-import fastapi
-
-
-app = fastapi()
-
-
-
