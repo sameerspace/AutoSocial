@@ -5,6 +5,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
+from models.post import Post
+from instabot.bot.bot_photo import upload_photo
+
 chrome = webdriver.Chrome("G:/ChromeDriver/chromedriver.exe")
 chrome.get("https://www.instagram.com")
 
@@ -17,8 +20,11 @@ password = WebDriverWait(chrome, 10).until(
 username.clear()
 password.clear()
 
-username.send_keys("umt.acm")
-password.send_keys("AppleJuiceACM2022")
+user_text = input("Enter username")
+pass_text = input("Enter password")
+
+username.send_keys(user_text)
+password.send_keys(pass_text)
 
 
 button = WebDriverWait(chrome, 2).until(EC.element_to_be_clickable(
