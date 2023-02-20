@@ -1,11 +1,14 @@
 import io
 from typing import Optional
+import aiofiles
 
-from fastapi import FastAPI, File, Form
+from fastapi import FastAPI, File, Form, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from PIL import Image
+
 
 from models.post import Post
+from instagram import post_to_instagram
+
 
 app = FastAPI()
 
@@ -29,22 +32,26 @@ async def index():
     return {"message": "Hello World"}
 
 
-@app.post("/post_instagram")
-async def post_instagram(file: bytes = File(...), caption: str = Form(...)):
-    img = Image.open(io.BytesIO(file))
-    return {
-        'name': img.height,
-        'caption': caption,
-    }
+# async def save_image(filename, uploaded_file: UploadFile):
+#     async with aiofiles.open(filename, 'wb') as file:
+#         content = await uploaded_file.read()
+#         await file.write(content)
 
 
 @app.post("/post_image")
-async def post_image(files: list[bytes] = File(...), caption: str = Form(...)):
-    print(files)
+async def post_image(files: list[UploadFile] = File(...), caption: str = Form(...)):
     images: list = []
     for file in files:
-        images.append(Image.open(io.BytesIO(file)))
+        images.append(file)
+
+    post = Post(caption=caption, files=images)
+
+    if post_to_instagram(post=post):
+        return {
+            "status": "success"
+        }
+
     return {
-        "caption": caption,
-        "files_captured": len(images),
+        "post": post.caption,
+        "images": len(post.files)
     }

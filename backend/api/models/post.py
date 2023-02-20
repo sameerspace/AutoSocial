@@ -5,5 +5,5 @@ from fastapi import UploadFile
 
 
 class Post(BaseModel):
-    caption: Optional[str]
-    files: UploadFile
+    caption: str
+    files: list[UploadFile]
